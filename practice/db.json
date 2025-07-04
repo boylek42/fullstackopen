@@ -1,0 +1,69 @@
+{
+  "notes": [
+    {
+      "id": "1",
+      "content": "HTML is easy",
+      "important": true
+    },
+    {
+      "id": "2",
+      "content": "Browser can execute only JavaScript",
+      "important": false
+    },
+    {
+      "id": "3",
+      "content": "HTML is easy",
+      "important": false
+    },
+    {
+      "id": "4",
+      "content": "gnf",
+      "important": false
+    },
+    {
+      "id": "fbb7",
+      "content": "Hello",
+      "important": false
+    },
+    {
+      "id": "f16b",
+      "content": "Hello",
+      "important": false
+    },
+    {
+      "id": "bcdf",
+      "content": "hghgfh",
+      "important": false
+    },
+    {
+      "id": "01f9",
+      "content": "HTML is easy",
+      "important": false
+    },
+    {
+      "id": "e774",
+      "content": "HTML is easy",
+      "important": false
+    },
+    {
+      "id": "08fb",
+      "content": "Helol",
+      "important": false
+    },
+    {
+      "id": "e4f8",
+      "content": "nfnnf",
+      "important": false
+    },
+    {
+      "id": "7028",
+      "content": "hmgmh",
+      "important": false
+    },
+    {
+      "id": "2430",
+      "content": "gmhmhg",
+      "important": false
+    }
+  ]
+}
