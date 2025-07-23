@@ -21,7 +21,7 @@ app.use(express.json())
 app.use(express.static('dist'))
 
 mongoose.set('strictQuery', false)
-mongoose.connect(url)
+mongoose.connect(process.env.MONGODB_URI)
 
 const contactSchema = new mongoose.Schema({
   'name': {
