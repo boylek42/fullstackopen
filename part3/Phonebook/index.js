@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
@@ -18,10 +19,6 @@ const errorHandler = (error, request, response, next) => {
 
 app.use(express.json())
 app.use(express.static('dist'))
-
-
-const password = process.argv[2]
-const url = `mongodb+srv://boylek42:${password}@phonebook.zrqmhxt.mongodb.net/?retryWrites=true&w=majority&appName=Phonebook`
 
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
@@ -151,7 +148,7 @@ app.post('/api/persons/', (request, response, next) => {
 
   app.use(errorHandler)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Now listening on port: ${PORT}`)
 })
