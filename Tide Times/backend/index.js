@@ -1,6 +1,7 @@
 const express = require('express')
 const tideAPI = require('./services/tideApi')
 const dotenv = require('dotenv')
+const cors = require('cors')
 dotenv.config( { path: '../.env' })
 
 const app = express()
@@ -40,7 +41,7 @@ app.use(requestLogger)
 
 // ROUTES
 // Route for current tide height
-app.get('/api/tide/current', (request, response, next) => {
+app.get('/api/tide/current', cors(), (request, response, next) => {
   console.log('Making request to World Tides API for current height...')
   console.log('API Key loaded:', process.env.API_KEY ? 'Yes' : 'No')
   console.log('API Key length:', process.env.API_KEY?.length || 'undefined')
@@ -71,7 +72,7 @@ app.get('/api/tide/current', (request, response, next) => {
 
 
 // Route without date parameter (defaults to today)
-app.get('/api/tide', (request, response, next) => {
+app.get('/api/tide', cors(), (request, response, next) => {
   console.log('Making request to World Tides API...')
   console.log('API Key loaded:', process.env.API_KEY ? 'Yes' : 'No')
   console.log('API Key length:', process.env.API_KEY?.length || 'undefined')
@@ -85,7 +86,7 @@ app.get('/api/tide', (request, response, next) => {
       lon: -6.15,
       date: requestedDate,
       days: 7,
-      datum: 'MSL'
+      datum: 'CD'
     }
   })
     .then(apiResponse => {
@@ -97,7 +98,7 @@ app.get('/api/tide', (request, response, next) => {
 })
 
 // Route with date parameter
-app.get('/api/tide/:date', (request, response, next) => {
+app.get('/api/tide/:date', cors(), (request, response, next) => {
   console.log('Making request to World Tides API...')
   console.log('API Key loaded:', process.env.API_KEY ? 'Yes' : 'No')
   console.log('API Key length:', process.env.API_KEY?.length || 'undefined')
