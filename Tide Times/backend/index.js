@@ -36,18 +36,15 @@ const errorHandler = (error, request, response) => {
 
 app.use(requestLogger)
 
-
-
-
 // ROUTES
 // Route for current tide height
 app.get('/api/tide/current', cors(), (request, response, next) => {
-  console.log('Making request to World Tides API for current height...')
+  console.log('Making request to World Tides API for today\'s tide data...')
   console.log('API Key loaded:', process.env.API_KEY ? 'Yes' : 'No')
   console.log('API Key length:', process.env.API_KEY?.length || 'undefined')
 
   const now = new Date()
-  const currentTime = now.toISOString()
+  const currentDateTime = new Date()
 
   tideAPI.get('', {
     params: {
@@ -55,17 +52,20 @@ app.get('/api/tide/current', cors(), (request, response, next) => {
       lat: 53.45,
       lon: -6.15,
       datum: 'CD',
-      // Optional: Add time parameters for more precise data
-      start: Math.floor(now.getTime() / 1000) - 300, // 5 minutes ago
-      length: 600, // 10 minutes total
-      step: 60 // 1-minute intervals
+      // Today's Extremes:
+      extremes: '',
+      date: 'today',
     }
   })
     .then(apiResponse => {
       console.log('API Response received successfully')
       console.log('Response data structure:', Object.keys(apiResponse.data))
-      const currentHeight = getCurrentHeightSimple(apiResponse.data, currentTime)
-      response.json(currentHeight)
+      const today = now.toISOString().split('T')[0]
+
+      const currentHeight = getCurrentHeightSimple(apiResponse.data, currentDateTime)
+      const dailyExtremes = processTideData(apiResponse.data, today)
+      console.log({currentHeight, dailyExtremes})
+      response.json({currentHeight, dailyExtremes})
     })
     .catch(error => next(error))
 })
