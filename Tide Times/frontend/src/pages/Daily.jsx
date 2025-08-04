@@ -27,7 +27,9 @@ const Daily = () => {
   }
 
   return (
+    <>
     <DisplayDaily currentHeight = {currentTide} extremeTides={ dailyData }/>
+    </>
   )
 }
 
