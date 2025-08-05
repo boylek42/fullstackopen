@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import tideService from '../services/tides'
-import DisplayDaily from '../components/TideDisplay'
+import DisplayDaily from '../components/DisplayDaily'
+import stations from "../services/stations"
+
 
 
 const Daily = () => {
@@ -28,6 +30,7 @@ const Daily = () => {
 
   return (
     <>
+    <h1>Current Tide Data</h1>
     <DisplayDaily currentHeight = {currentTide} extremeTides={ dailyData }/>
     </>
   )

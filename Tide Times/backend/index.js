@@ -16,32 +16,32 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
-const errorHandler = (error, request, response) => {
-  console.log('Full error details:')
-  console.error('Status:', error.response?.status)
-  console.error('Status Text:', error.response?.statusText)
-  console.error('Response data:', error.response?.data)
-  console.error('Request URL:', error.config?.url)
-  console.error('Request params:', error.config?.params)
-  console.log('--')
+// const errorHandler = (error, request, response, next) => {
+//   console.log('Full error details:')
+//   console.error('Status:', error.response?.status)
+//   console.error('Status Text:', error.response?.statusText)
+//   console.error('Response data:', error.response?.data)
+//   console.error('Request URL:', error.config?.url)
+//   console.error('Request params:', error.config?.params)
+//   console.log('--')
 
-  if(error.response) {
-    return response.status(502).json({ error: 'Bad Gateway: Tidal API returned an error' })
-  }
-  else if (error.request) {
-    return response.status(503).json({ error: 'Service Unavailable: No response from Tidal API' })
-  }
-  return response.status(500).json({ error: 'Unexpected error while fetching Tidal data.' })
-}
+//   if(error.response) {
+//     return response.status(502).json({ error: 'Bad Gateway: Tidal API returned an error' })
+//   }
+//   else if (error.request) {
+//     return response.status(503).json({ error: 'Service Unavailable: No response from Tidal API' })
+//   }
+//   return response.status(500).json({ error: 'Unexpected error while fetching Tidal data.' })
+// }
 
 app.use(requestLogger)
 
 // ROUTES
 // Route for current tide height
 app.get('/api/tide/current', cors(), (request, response, next) => {
-  console.log('Making request to World Tides API for today\'s tide data...')
-  console.log('API Key loaded:', process.env.API_KEY ? 'Yes' : 'No')
-  console.log('API Key length:', process.env.API_KEY?.length || 'undefined')
+  // console.log('Making request to World Tides API for today\'s tide data...')
+  // console.log('API Key loaded:', process.env.API_KEY ? 'Yes' : 'No')
+  // console.log('API Key length:', process.env.API_KEY?.length || 'undefined')
 
   const now = new Date()
   const currentDateTime = new Date()
@@ -62,12 +62,13 @@ app.get('/api/tide/current', cors(), (request, response, next) => {
       console.log('Response data structure:', Object.keys(apiResponse.data))
       const today = now.toISOString().split('T')[0]
 
+    //   console.log(apiResponse.data)
       const currentHeight = getCurrentHeightSimple(apiResponse.data, currentDateTime)
       const dailyExtremes = processTideData(apiResponse.data, today)
-      console.log({currentHeight, dailyExtremes})
+      console.log(`Current Height: ${currentHeight}, Daily Extremes: ${dailyExtremes}`)
       response.json({currentHeight, dailyExtremes})
     })
-    .catch(error => next(error))
+    // .catch(error => next(error))
 })
 
 
@@ -77,7 +78,7 @@ app.get('/api/tide', cors(), (request, response, next) => {
   console.log('API Key loaded:', process.env.API_KEY ? 'Yes' : 'No')
   console.log('API Key length:', process.env.API_KEY?.length || 'undefined')
 
-  const requestedDate = new Date().toISOString().split('T')[0] // Default to today
+  const requestedDate = new Date()// Default to today
 
   tideAPI.get('', {
     params: {
@@ -131,19 +132,30 @@ const getCurrentHeightSimple = (data, currentTime) => {
   if (!data.heights || data.heights.length === 0) {
     return {
       error: 'No height data available',
-      location: data.location,
+      location: data.station || 'Unknown location.',
       requestTime: currentTime
     }
   }
 
-  // Just use the most recent height reading
-  const latestHeight = data.heights[data.heights.length - 1]
+  // Find the timestamp closest to the current time.
+  const now = new Date()
+  console.log(`Now: ${now}`)
+  let closest = data.heights[0]
+  let minDiff = Math.abs(now - new Date(closest.dt * 1000))
+  data.heights.forEach(h => {
+    const diff = Math.abs(now - new Date(h.dt * 1000))
+    if (diff < minDiff) {
+      closest = h
+      minDiff = diff
+    }
+  })
 
+  console.log(`Current Height is: ${parseFloat(closest.height.toFixed(2))}`)
   return {
-    location: data.location,
+    location: data.station || 'Unknown Location',
     currentTime: currentTime,
-    height: parseFloat(latestHeight.height.toFixed(2)),
-    timestamp: new Date(latestHeight.dt * 1000).toISOString()
+    height: parseFloat(closest.height.toFixed(2)),
+    timestamp: new Date(closest.dt * 1000).toISOString()
   }
 }
 
@@ -189,5 +201,5 @@ const processTideData = (data, targetDate) => {
   }
 }
 
-app.use(errorHandler)
+// app.use(errorHandler)
 app.listen(PORT, () => console.log(`App running on port: ${PORT}`))
