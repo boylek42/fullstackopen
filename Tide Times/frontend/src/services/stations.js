@@ -2,27 +2,33 @@ const stations = [
     {
         id: 1,
         name: 'Malahide', 
-        lon: 53.45, 
-        lat: -6.15
+        lat: 53.45,    // This is latitude 
+        lon: -6.15     // This is longitude
     },
     {
         id: 2,
         name: 'Howth', 
-        lon: 53.383, 
-        lat: -6.067
+        lat: 53.383,   // This is latitude
+        lon: -6.067    // This is longitude  
     },
     {
         id: 3,
         name: 'Dublin - North Wall', 
-        lon: 53.35, 
-        lat: -6.217
+        lat: 53.35,    // This is latitude
+        lon: -6.217    // This is longitude
     },
     {
         id: 4,
         name: 'Dun Laoghaire', 
-        lon: 53.3, 
-        lat: -6.133
+        lat: 53.3,     // This is latitude
+        lon: -6.133    // This is longitude
+    },
+    {
+        id: 5,
+        name: 'Cromer', 
+        lat: 52.934,     // This is latitude
+        lon: 1.302    // This is longitude
     }
-]
+  ]
 
 export default stations

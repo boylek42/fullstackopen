@@ -16,41 +16,38 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
-// const errorHandler = (error, request, response, next) => {
-//   console.log('Full error details:')
-//   console.error('Status:', error.response?.status)
-//   console.error('Status Text:', error.response?.statusText)
-//   console.error('Response data:', error.response?.data)
-//   console.error('Request URL:', error.config?.url)
-//   console.error('Request params:', error.config?.params)
-//   console.log('--')
+const errorHandler = (error, request, response, next) => {
+  console.log('Full error details:')
+  console.error('Status:', error.response?.status)
+  console.error('Status Text:', error.response?.statusText)
+  console.error('Response data:', error.response?.data)
+  console.error('Request URL:', error.config?.url)
+  console.error('Request params:', error.config?.params)
+  console.log('--')
 
-//   if(error.response) {
-//     return response.status(502).json({ error: 'Bad Gateway: Tidal API returned an error' })
-//   }
-//   else if (error.request) {
-//     return response.status(503).json({ error: 'Service Unavailable: No response from Tidal API' })
-//   }
-//   return response.status(500).json({ error: 'Unexpected error while fetching Tidal data.' })
-// }
+  if(error.response) {
+    return response.status(502).json({ error: 'Bad Gateway: Tidal API returned an error' })
+  }
+  else if (error.request) {
+    return response.status(503).json({ error: 'Service Unavailable: No response from Tidal API' })
+  }
+  return response.status(500).json({ error: 'Unexpected error while fetching Tidal data.' })
+}
 
 app.use(requestLogger)
 
 // ROUTES
 // Route for current tide height
 app.get('/api/tide/current', cors(), (request, response, next) => {
-  // console.log('Making request to World Tides API for today\'s tide data...')
-  // console.log('API Key loaded:', process.env.API_KEY ? 'Yes' : 'No')
-  // console.log('API Key length:', process.env.API_KEY?.length || 'undefined')
-
+  const {lat, lon} = request.query
   const now = new Date()
   const currentDateTime = new Date()
 
   tideAPI.get('', {
     params: {
       heights: '',  // Parameter for getting height data
-      lat: 53.45,
-      lon: -6.15,
+      lat: parseFloat(lat),    // ← Use query parameter
+      lon: parseFloat(lon),
       datum: 'CD',
       // Today's Extremes:
       extremes: '',
@@ -62,73 +59,15 @@ app.get('/api/tide/current', cors(), (request, response, next) => {
       console.log('Response data structure:', Object.keys(apiResponse.data))
       const today = now.toISOString().split('T')[0]
 
-    //   console.log(apiResponse.data)
-      const currentHeight = getCurrentHeightSimple(apiResponse.data, currentDateTime)
+      console.log(apiResponse.data)
+      const currentHeight = getCurrentHeight(apiResponse.data, currentDateTime)
       const dailyExtremes = processTideData(apiResponse.data, today)
       console.log(`Current Height: ${currentHeight}, Daily Extremes: ${dailyExtremes}`)
       response.json({currentHeight, dailyExtremes})
     })
-    // .catch(error => next(error))
 })
 
-
-// Route without date parameter (defaults to today)
-app.get('/api/tide', cors(), (request, response, next) => {
-  console.log('Making request to World Tides API...')
-  console.log('API Key loaded:', process.env.API_KEY ? 'Yes' : 'No')
-  console.log('API Key length:', process.env.API_KEY?.length || 'undefined')
-
-  const requestedDate = new Date()// Default to today
-
-  tideAPI.get('', {
-    params: {
-      extremes: '',
-      lat: 53.45,
-      lon: -6.15,
-      date: requestedDate,
-      days: 7,
-      datum: 'CD'
-    }
-  })
-    .then(apiResponse => {
-      console.log('API Response received successfully')
-      const processedData = processTideData(apiResponse.data, requestedDate)
-      response.json(processedData)
-    })
-    .catch(error => next(error))
-})
-
-// Route with date parameter
-app.get('/api/tide/:date', cors(), (request, response, next) => {
-  console.log('Making request to World Tides API...')
-  console.log('API Key loaded:', process.env.API_KEY ? 'Yes' : 'No')
-  console.log('API Key length:', process.env.API_KEY?.length || 'undefined')
-
-  const requestedDate = request.params.date
-
-  tideAPI.get('', {
-    params: {
-      extremes: '',
-      lat: 53.45,
-      lon: -6.15,
-      date: requestedDate,
-      days: 7,
-      datum: 'CD',
-      timezone: 'auto'
-    }
-  })
-    .then(apiResponse => {
-      console.log('API Response received successfully')
-      const processedData = processTideData(apiResponse.data, requestedDate)
-      response.json(processedData)
-    })
-    .catch(error => {
-      next(error)
-    })
-})
-
-// Alternative approach using the current time directly (simpler but less precise)
-const getCurrentHeightSimple = (data, currentTime) => {
+const getCurrentHeight = (data, currentTime) => {
   if (!data.heights || data.heights.length === 0) {
     return {
       error: 'No height data available',
@@ -201,5 +140,5 @@ const processTideData = (data, targetDate) => {
   }
 }
 
-// app.use(errorHandler)
+app.use(errorHandler)
 app.listen(PORT, () => console.log(`App running on port: ${PORT}`))
