@@ -1,3 +1,6 @@
+import Grid from '@mui/material/Grid'
+import Box from '@mui/material/Box'
+import { alignItems, flex, flexDirection } from '@mui/system'
 const DisplayDaily = ({currentHeight, extremeTides} ) => {
   
   const getLowTides = (extremeTides) => extremeTides.lows.map(low => ({type: 'Low', time: low.time, height: low.height, fullDateTime: low.fullDateTime }))
@@ -24,16 +27,81 @@ const DisplayDaily = ({currentHeight, extremeTides} ) => {
 
   console.log('Next low is: ', nextLow)
   console.log('Next high is: ', nextHigh)
+
+  // const isRising = (currentHeight, nextLow)
   
-  return (
-    <>
-      <h3>Current tide height:</h3>
-      <p>{currentHeight} metres</p>
-      <h3>High / Low Tides</h3>
-      {nextHigh ? (<p>Next High Tide at {nextHigh.time}: {nextHigh.height} metres</p>) : (<p>No more high tides today</p>)}
-      {nextLow ? (<p>Next Low Tide at {nextLow.time}: {nextLow.height} metres</p>) : (<p>No more low tides today</p>)}
-    </>
-  )
-}
+return (
+    <Grid container direction="column" sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column'}}>
+      {/* Top Half - Current Tide */}
+      <Grid
+        item
+        sx={{
+          flex: 1,
+          backgroundColor: 'lightsalmon',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          fontFamily: 'Roboto, sans-serif',
+          fontSize: 75
+        }}
+      >
+        <h1>{currentHeight}m</h1>
+        <p>Currently rising</p>
+      </Grid>
+
+     <Grid
+  item
+  sx={{
+    flex: 1,
+    backgroundColor: 'lightblue',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontFamily: 'Roboto, sans-serif',
+    fontSize: 75,
+  }}
+>
+  {/* Title */}
+  <Grid container direction="row" alignItems="center">
+    <Grid item xs={12}>
+      <h3 style={{ marginBottom: 32 }}>Today's Tide Extremes</h3>
+    </Grid>
+    <Grid container item xs={12} justifyContent="center" spacing={4}>
+      <Grid item>
+        <Box textAlign="center">
+          {nextHigh ? (
+            <p>
+              {nextHigh.type}
+              <br />
+              {nextHigh.time}
+              <br />
+              {nextHigh.height}m
+            </p>
+          ) : (
+            <p>No more high tides today</p>
+          )}
+        </Box>
+      </Grid>
+      <Grid item>
+        <Box textAlign="center">
+          {nextLow ? (
+            <p>
+              {nextLow.type}
+              <br />
+              {nextLow.time}
+              <br />
+              {nextLow.height}m
+            </p>
+          ) : (
+            <p>No more low tides today</p>
+          )}
+        </Box>
+      </Grid>
+    </Grid>
+  </Grid>
+</Grid>
+</Grid>)}
 
 export default DisplayDaily

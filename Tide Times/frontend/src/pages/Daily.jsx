@@ -3,11 +3,13 @@ import tideService from '../services/tides'
 import DisplayDaily from '../components/DisplayDaily'
 import SelectStation from '../components/SelectStation'
 import stations from '../services/stations'
+import Grid from '@mui/material/Grid'
 
 const Daily = () => {
   const [dailyData, setTideToday] = useState(null)
   const [currentTide, setCurrentTide] = useState(null)
   const [currentStation, setCurrentStation] = useState(stations[0]) // Start with first station
+  // const [rising, setRising] = useState(true) // If the tide is Rising
 
   console.log('Daily component rendered, currentStation:', currentStation)
   console.log('dailyData:', dailyData, 'currentTide:', currentTide)
@@ -40,13 +42,15 @@ const Daily = () => {
 
   return (
     <>
-      <h1>Current Tide Data</h1>
+    <Grid maxWidth='100%'>
+      {<h1>Current Tide Data</h1>
       <SelectStation 
         currentStation={currentStation} 
         setCurrentStation={setCurrentStation} 
       />
-      <h2>Station: {currentStation.name}</h2>
+      <h2>Station: {currentStation.name}</h2>}
       <DisplayDaily currentHeight={currentTide} extremeTides={dailyData}/>
+    </Grid>
     </>
   )
 }
