@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import tideService from '../services/tides'
 import DisplayDaily from '../components/DisplayDaily'
-import SelectStation from '../components/SelectStation'
+// import SelectStation from '../components/SelectStation'
 import stations from '../services/stations'
-import Grid from '@mui/material/Grid'
+
+import Container from '@mui/material/Container'
+import Paper from '@mui/material/Paper';
 
 const Daily = () => {
   const [dailyData, setTideToday] = useState(null)
@@ -42,15 +44,13 @@ const Daily = () => {
 
   return (
     <>
-    <Grid maxWidth='100%'>
-      {<h1>Current Tide Data</h1>
-      <SelectStation 
-        currentStation={currentStation} 
-        setCurrentStation={setCurrentStation} 
-      />
-      <h2>Station: {currentStation.name}</h2>}
-      <DisplayDaily currentHeight={currentTide} extremeTides={dailyData}/>
-    </Grid>
+      {/* Outermost Container */}
+      <Container maxWidth='lg' sx={{textAlign: 'center'}}>
+          {/* {<h1>Current Tide Data</h1>} */}
+          {/* {<h2>Station: {currentStation.name}</h2>} */}
+          {/* {<SelectStation currentStation={currentStation} setCurrentStation={setCurrentStation} />} */}
+          <DisplayDaily currentHeight={currentTide} extremeTides={dailyData} currentStation={currentStation.name} setCurrentStation={setCurrentStation}/>
+      </Container>
     </>
   )
 }

@@ -20,7 +20,7 @@ const SelectStation = ({ currentStation, setCurrentStation }) => {
     <>
       <div>
         <label>
-          Pick a station:  
+          Location:   
           <select value={currentStation.name} onChange={handleSelectChange}>
             <option value='Malahide'>Malahide</option>
             <option value='Howth'>Howth</option>

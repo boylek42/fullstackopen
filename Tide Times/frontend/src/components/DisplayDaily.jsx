@@ -1,7 +1,10 @@
 import Grid from '@mui/material/Grid'
-import Box from '@mui/material/Box'
-import { alignItems, flex, flexDirection } from '@mui/system'
-const DisplayDaily = ({currentHeight, extremeTides} ) => {
+import Typography from '@mui/material/Typography'
+import SelectStation from '../components/SelectStation'
+import Card from '@mui/material/Card'
+import Wave from 'react-wavify'
+
+const DisplayDaily = ({currentHeight, extremeTides, currentStation, setCurrentStation} ) => {
   
   const getLowTides = (extremeTides) => extremeTides.lows.map(low => ({type: 'Low', time: low.time, height: low.height, fullDateTime: low.fullDateTime }))
   const lowTides = getLowTides(extremeTides)
@@ -31,77 +34,79 @@ const DisplayDaily = ({currentHeight, extremeTides} ) => {
   // const isRising = (currentHeight, nextLow)
   
 return (
-    <Grid container direction="column" sx={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column'}}>
-      {/* Top Half - Current Tide */}
-      <Grid
-        item
-        sx={{
-          flex: 1,
-          backgroundColor: 'lightsalmon',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          fontFamily: 'Roboto, sans-serif',
-          fontSize: 75
-        }}
-      >
-        <h1>{currentHeight}m</h1>
-        <p>Currently rising</p>
-      </Grid>
-
-     <Grid
-  item
-  sx={{
-    flex: 1,
-    backgroundColor: 'lightblue',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontFamily: 'Roboto, sans-serif',
-    fontSize: 75,
-  }}
->
-  {/* Title */}
-  <Grid container direction="row" alignItems="center">
+  <>
+  <Grid container direction='column' spacing={2} sx={{textAlign: 'center', py: 4}}>
+    <Wave mask="url(#mask)" fill="#1277b0" >
+      <defs>
+        <linearGradient id="gradient" gradientTransform="rotate(90)">
+          <stop offset="0" stopColor="white" />
+          <stop offset="0.7" stopColor="black" />
+        </linearGradient>
+        <mask id="mask">
+          <rect x="0" y="0" width="2000" height="120" fill="url(#gradient)"  />
+        </mask>
+      </defs>
+    </Wave>
+    {/* Current Tide Height */}
     <Grid item xs={12}>
-      <h3 style={{ marginBottom: 32 }}>Today's Tide Extremes</h3>
+      <Typography variant='h3' sx={{fontWeight: 300, mt: 2}}>
+        {currentHeight}m
+      </Typography>
     </Grid>
-    <Grid container item xs={12} justifyContent="center" spacing={4}>
-      <Grid item>
-        <Box textAlign="center">
-          {nextHigh ? (
-            <p>
-              {nextHigh.type}
-              <br />
-              {nextHigh.time}
-              <br />
-              {nextHigh.height}m
-            </p>
-          ) : (
-            <p>No more high tides today</p>
-          )}
-        </Box>
-      </Grid>
-      <Grid item>
-        <Box textAlign="center">
-          {nextLow ? (
-            <p>
-              {nextLow.type}
-              <br />
-              {nextLow.time}
-              <br />
-              {nextLow.height}m
-            </p>
-          ) : (
-            <p>No more low tides today</p>
-          )}
-        </Box>
+    <Grid item xs={12}>
+      <Typography variant='h6' color="text.secondary" sx={{mt: 1}}>
+        Currently rising at {currentStation}
+      </Typography>
+      <p></p>
+    </Grid>
+
+    <Grid item xs={12}>
+      {<SelectStation currentStation={currentStation} setCurrentStation={setCurrentStation} />}
+    </Grid>
+
+  {/* Title */}
+    <Grid item xs={12}>
+      <Typography variant='h5' sx={{fontWeight: 500, mt: 3}}>
+        Today's Tide Extremes
+      </Typography>
+    </Grid>
+
+    
+    <Grid item xs={12}>
+      <Grid container spacing={6} justifyContent="center" alignItems="center">
+        {/* High Tide Card */}
+        <Grid item xs={12} sm={6} display="flex" justifyContent="center">
+          <Card variant='outlined' sx={{ p: 2, minWidth: 200 }}>
+            {nextLow ? (
+              <>
+                <Typography>{nextHigh.type}</Typography>
+                <Typography color="text.secondary">{nextHigh.time}</Typography>
+                <Typography variant="h6">{nextHigh.height}</Typography>
+              </>
+            ) : (
+              <Typography color='text.secondary'>No more low tides today</Typography>
+            )}
+          </Card>
+        </Grid>
+        
+        {/* Low Tide Card */}
+        <Grid item xs={12} sm={6} display="flex" justifyContent="center">
+          <Card variant='outlined' sx={{ p: 2, minWidth: 200 }}>
+            {nextLow ? (
+              <>
+                <Typography>{nextLow.type}</Typography>
+                <Typography color="text.secondary">{nextLow.time}</Typography>
+                <Typography variant="h6">{nextLow.height}</Typography>
+              </>
+            ) : (
+              <Typography color='text.secondary'>No more low tides today</Typography>
+            )}
+          </Card>
+        </Grid>
       </Grid>
     </Grid>
   </Grid>
-</Grid>
-</Grid>)}
+  </>
+)}
 
 export default DisplayDaily
